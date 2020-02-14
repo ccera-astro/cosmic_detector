@@ -12,10 +12,6 @@ import copy
 cndx = int(sys.argv[1])
 cam = cv2.VideoCapture(cndx)
 
-#
-# Configure camera
-#
-cam.set(cv2.cv.CV_CAP_PROP_FPS, 15)
 
 #
 # Zoom final dimension in X and Y
@@ -43,14 +39,14 @@ while ((time.time() - now) <= 5.0):
     frame = numpy.array(frame)
     fmax += numpy.max(frame)
     count += 1
-
-print "Apparent frame rate: %f" % (float(count)/5.0)
+    
+print ("Apparent frame rate %f", float(count)/5.0)
 #
 # Reduce to average
 #
 fmax /= float(count)
 threshold = float(sys.argv[2])*fmax
-print "Threshold %f" % threshold
+print ("Threshhold %f", threshold)
 
 #
 # Forever
@@ -63,7 +59,7 @@ while True:
     rv, frame = cam.read()
     frame_count += 1
     if (frame_count >= 1000):
-        print "Still getting frames at %s" % time.ctime()
+        print ("Still getting frames at %s", time.ctime())
         frame_count = 0
     #
     # Convert to GrayScale
@@ -80,7 +76,7 @@ while True:
     xy_coordinates = []
     data = origframe
     if (numpy.max(frame) > threshold):
-        print "Event detected at %s" % time.ctime()
+        print ("Event detected at %s", time.ctime())
         #
         # This stuff stolen from Credo-Linux
         #
