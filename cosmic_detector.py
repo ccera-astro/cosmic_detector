@@ -40,13 +40,13 @@ while ((time.time() - now) <= 5.0):
     fmax += numpy.max(frame)
     count += 1
     
-print ("Apparent frame rate %f", float(count)/5.0)
+print ("Apparent frame rate ", float(count)/5.0)
 #
 # Reduce to average
 #
 fmax /= float(count)
 threshold = float(sys.argv[2])*fmax
-print ("Threshhold %f", threshold)
+print ("Threshhold ", threshold)
 
 #
 # Forever
@@ -59,7 +59,7 @@ while True:
     rv, frame = cam.read()
     frame_count += 1
     if (frame_count >= 1000):
-        print ("Still getting frames at %s", time.ctime())
+        print ("Still getting frames at ", time.ctime())
         frame_count = 0
     #
     # Convert to GrayScale
@@ -76,7 +76,7 @@ while True:
     xy_coordinates = []
     data = origframe
     if (numpy.max(frame) > threshold):
-        print ("Event detected at %s", time.ctime())
+        print ("Event detected at ", time.ctime())
         #
         # This stuff stolen from Credo-Linux
         #
