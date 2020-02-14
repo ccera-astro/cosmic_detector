@@ -114,9 +114,10 @@ while True:
         fractions = t - float(int(t))
         secondsbit = float(ltp.tm_sec) + fractions
         for x, y in xy_coordinates:
+            izoom2 = int(zoom/2)
             if x >= (zoom/2)+1 and y >= (zoom/2)+1:
-                img_crop = data[y-(zoom/2):y + (zoom/2),
-                           x-(zoom/2):x + (zoom/2)]
+                img_crop = data[y-izoom2:y + izoom2,
+                           x-izoom2:x + izoom2]
                 #
                 # Resulting image is scaled appropriately
                 #
