@@ -144,7 +144,7 @@ while True:
                     img_zoom = cv2.resize(img_crop, dim, interpolation=cv2.INTER_LINEAR)
                     fn = "%s%04d%02d%02d-%02d%02d%05.2f-%d:%d" % (args.prefix, ltp.tm_year, ltp.tm_mon, ltp.tm_mday,
                     ltp.tm_hour, ltp.tm_min, secondsbit, cndx, mcnt)
-                    jd = {'x' : x, 'y' : y, 'threshold' : threshold, 'zoom' : zoom,
+                    jd = {'x' : int(x), 'y' : int(y), 'threshold' : threshold, 'zoom' : zoom,
                         'latitude' : args.latitude, 'longitude' : args.longitude}
                     js = json.dumps(jd, sort_keys=True, indent=4)
                     fp = open(fn+".json", "w")
