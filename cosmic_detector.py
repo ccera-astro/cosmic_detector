@@ -1,15 +1,30 @@
+#!/usr/bin/env python3
 import cv2
 import numpy
 import os
 import sys
 import time
 import copy
+import json
+import argparse
 
 #
 # Open a capture stream to desired camera index
 #  (/dev/video{cndx})
 #
-cndx = int(sys.argv[1])
+
+parser = argparse.ArgumentParser(description='Detect Cosmic Muons via Webcam')
+parser.add_argument ('camera', type=int, help="Camera index", default=0)
+parser.add_argument ('threshold', type=float, help="Detection threshold as ratio", default=2.0)
+parser.add_argument ('prefix', type=string, help="File prefix", default="./")
+parser.add_argument ('latitude', type=float, help="Geographic latitude", default=44.9)
+parser.add_argument ('longitude', type=float, help="Geographic longitude", default=-76.03)
+args = parser.parse_args()
+
+#
+# Setup the camera for streaming
+#
+cndx = args.camera
 cam = cv2.VideoCapture(cndx)
 
 
@@ -45,7 +60,7 @@ print ("Apparent frame rate ", float(count)/5.0)
 # Reduce to average
 #
 fmax /= float(count)
-threshold = float(sys.argv[2])*fmax
+threshold = args.threshold*fmax
 print ("Threshhold ", threshold)
 
 #
@@ -127,7 +142,14 @@ while True:
                     pass
                 else:
                     img_zoom = cv2.resize(img_crop, dim, interpolation=cv2.INTER_LINEAR)
-                    fn = "cosmic-%04d%02d%02d-%02d%02d%05.2f-%d:%d.png" % (ltp.tm_year, ltp.tm_mon, ltp.tm_mday,
+                    fn = "%s%04d%02d%02d-%02d%02d%05.2f-%d:%d" % (args.prefix, ltp.tm_year, ltp.tm_mon, ltp.tm_mday,
                     ltp.tm_hour, ltp.tm_min, secondsbit, cndx, mcnt)
-                    cv2.imwrite(fn, img_zoom)
+                    jd = {'x' : x, 'y' : y, 'threshold' : threshold, 'zoom' : zoom,
+                        'latitude' : args.latitude, 'longitude' : args.longitude}
+                    js = json.dumps(jd, sort_keys=True, indent=4)
+                    fp = open(fn+".json", "w")
+                    fp.write(js)
+                    fp.close()
+                     
+                    cv2.imwrite(fn+".png", img_zoom)
                     mcnt += 1
