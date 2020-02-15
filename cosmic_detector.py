@@ -16,7 +16,7 @@ import argparse
 parser = argparse.ArgumentParser(description='Detect Cosmic Muons via Webcam')
 parser.add_argument ('camera', type=int, help="Camera index", default=0)
 parser.add_argument ('threshold', type=float, help="Detection threshold as ratio", default=2.0)
-parser.add_argument ('prefix', type=string, help="File prefix", default="./")
+parser.add_argument ('prefix', help="File prefix", default="./")
 parser.add_argument ('latitude', type=float, help="Geographic latitude", default=44.9)
 parser.add_argument ('longitude', type=float, help="Geographic longitude", default=-76.03)
 args = parser.parse_args()
