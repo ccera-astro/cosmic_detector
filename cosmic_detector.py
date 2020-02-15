@@ -148,7 +148,7 @@ while True:
                         'latitude' : args.latitude, 'longitude' : args.longitude}
                     js = json.dumps(jd, sort_keys=True, indent=4)
                     fp = open(fn+".json", "w")
-                    fp.write(js)
+                    fp.write(js+"\n")
                     fp.close()
                      
                     cv2.imwrite(fn+".png", img_zoom)
