@@ -14,9 +14,8 @@ event = False
 #
 # For da blinkin lights
 #
-def led_thread(args):
+def led_thread(serd):
     global event
-    serd = args[0]
     while True:
         if (event == True):
             event = False
