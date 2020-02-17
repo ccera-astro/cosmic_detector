@@ -90,6 +90,7 @@ while ((time.time() - now) <= 5.0):
     count += 1
 
 frate = (10*count)/5.0
+print ("Apparent frame rate", frate)
 #
 # Reduce to average
 #
@@ -110,7 +111,7 @@ while True:
     if ((frame_count % 100) == 0):
         print ("Still getting frames at ", time.ctime())
     if ((frame_count % 500) == 0):
-		cv2.imwrite("check_frame.png", frame)
+        cv2.imwrite("check_frame.png", frame)
 
 
     origframe = copy.deepcopy(frame)
