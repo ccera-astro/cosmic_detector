@@ -36,7 +36,7 @@ def grab_and_baseline(cam, count):
             accum_frame = numpy.multiply(accum_frame, 0)
             accum_init = True
         accum_frame = numpy.add(accum_frame, frame)
-    accum_frame = numpy.subtract(accum_frame, numpy.min(accum_frame))
+    #accum_frame = numpy.subtract(accum_frame, numpy.min(accum_frame))
     return accum_frame
     
 
