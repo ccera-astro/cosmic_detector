@@ -68,7 +68,7 @@ cam = cv2.VideoCapture(cndx)
 #
 # Create a thread that blinks the front-panel LED for an event
 #
-notify_thread = threading.Thread(target=led_thread, args=(args.led_port), daemon=True)
+notify_thread = threading.Thread(target=led_thread, args=(args.led_port,), daemon=True)
 notify_thread.start()
 
 #
