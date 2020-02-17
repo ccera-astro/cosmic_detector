@@ -107,9 +107,11 @@ frame_count = 0
 while True:
     frame = grab_and_baseline(cam, 10)
     frame_count += 1
-    if (frame_count >= 100):
+    if ((frame_count % 100) == 0):
         print ("Still getting frames at ", time.ctime())
-        frame_count = 0
+    if ((frame_count % 500) == 0):
+		cv2.imwrite("check_frame.png", frame)
+
 
     origframe = copy.deepcopy(frame)
     frame = numpy.array(frame)
