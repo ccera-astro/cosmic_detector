@@ -37,7 +37,6 @@ def grab_and_baseline(cam, count):
             accum_init = True
         accum_frame = numpy.add(accum_frame, frame)
     accum_frame = numpy.subtract(accum_frame, numpy.min(accum_frame))
-    accum_frame = accum_frame.astype(int)
     return accum_frame
     
 
@@ -97,7 +96,7 @@ print ("Apparent frame rate", frate)
 fmax /= float(count)
 threshold = args.threshold*fmax
 print ("Threshhold ", threshold)
-
+astyp
 #
 # Forever
 #
