@@ -7,7 +7,44 @@ import time
 import copy
 import json
 import argparse
+import serial
+import threading
+event = False
 
+#
+# For da blinkin lights
+#
+def led_thread(args):
+    global event
+    serd = args[0]
+    while True:
+        if (event == True):
+            event = False
+            if (serd != None):
+                ser = serial.Serial(serd)
+                time.sleep(0.05)
+                ser.close()
+        time.sleep(0.25)
+    
+def grab_and_baseline(cam, count):
+    accum_frame = None
+    for i in range(count):
+        frame = cam.read()
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        if accum_frame == None:
+            accum_frame = copy.deepcopy(frame)
+            accum_frame = numpy.multiply(accum_frame, 0)
+        accum_frame = numpy.add(accum_frame, accum_frame)
+    accum_frame = numpy.subtract(accum_frame, min(accum_frame))
+    accum_frame = accum_frame.astype(int)
+    return accum_frame
+    
+
+def normalize_image(img, peak):
+    img = numpy.divide(img, numpy.max(img))
+    img = numpy.multiply(img, peak)
+    img = img.astype(int)
+    return img
 #
 # Open a capture stream to desired camera index
 #  (/dev/video{cndx})
@@ -19,6 +56,7 @@ parser.add_argument ('--threshold', type=float, help="Detection threshold as rat
 parser.add_argument ('--prefix', help="File prefix", default="./")
 parser.add_argument ('--latitude', type=float, help="Geographic latitude", default=44.9)
 parser.add_argument ('--longitude', type=float, help="Geographic longitude", default=-76.03)
+parser.add_argument ('--led-port', help="Serial port for LED indicator", default=None)
 args = parser.parse_args()
 
 #
@@ -27,6 +65,11 @@ args = parser.parse_args()
 cndx = args.camera
 cam = cv2.VideoCapture(cndx)
 
+#
+# Create a thread that blinks the front-panel LED for an event
+#
+notify_thread = threading.Thread(target=led_thread, args=(args.led_port), daemon=True)
+notify_thread.start()
 
 #
 # Zoom final dimension in X and Y
@@ -41,21 +84,12 @@ fmax = 0
 now = time.time()
 count = 0
 
-#
-# Build up an average of the max pixels
-#  Do this for about 5 seconds
-#
 while ((time.time() - now) <= 5.0):
-    rv, frame = cam.read()
-    #
-    # Convert to GrayScale
-    #
-    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    frame = numpy.array(frame)
+    frame = grab_and_baseline(cam, 10)
     fmax += numpy.max(frame)
     count += 1
-    
-print ("Apparent frame rate ", float(count)/5.0)
+
+frate = (10*count)/5.0
 #
 # Reduce to average
 #
@@ -71,15 +105,12 @@ print ("Threshhold ", threshold)
 #
 frame_count = 0
 while True:
-    rv, frame = cam.read()
+    rv, frame = grab_and_baseline(cam, 10)
     frame_count += 1
-    if (frame_count >= 1000):
+    if (frame_count >= 100):
         print ("Still getting frames at ", time.ctime())
         frame_count = 0
-    #
-    # Convert to GrayScale
-    #
-    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
     origframe = copy.deepcopy(frame)
     frame = numpy.array(frame)
     #
@@ -90,7 +121,8 @@ while True:
     counter = 0
     xy_coordinates = []
     data = origframe
-    if (numpy.max(frame) > threshold):
+    frame_max = numpy.max(frame)
+    if (frame_max > threshold):
         print ("Event detected at ", time.ctime())
         #
         # This stuff stolen from Credo-Linux
@@ -133,6 +165,12 @@ while True:
             if x >= (zoom/2)+1 and y >= (zoom/2)+1:
                 img_crop = data[y-izoom2:y + izoom2,
                            x-izoom2:x + izoom2]
+                
+                #
+                # Signal the LED notifier thread
+                #
+                if (event != True):
+                    event = True
                 #
                 # Resulting image is scaled appropriately
                 #
@@ -141,11 +179,12 @@ while True:
                 if img_crop is None:
                     pass
                 else:
+                    img_crop = normalize_image(img_crop, 254)
                     img_zoom = cv2.resize(img_crop, dim, interpolation=cv2.INTER_LINEAR)
                     fn = "%s%04d%02d%02d-%02d%02d%05.2f-%d:%d" % (args.prefix, ltp.tm_year, ltp.tm_mon, ltp.tm_mday,
                     ltp.tm_hour, ltp.tm_min, secondsbit, cndx, mcnt)
                     jd = {'x' : int(x), 'y' : int(y), 'threshold' : threshold, 'zoom' : zoom,
-                        'latitude' : args.latitude, 'longitude' : args.longitude}
+                        'latitude' : args.latitude, 'longitude' : args.longitude, 'ratio' : frame_max/threshold}
                     js = json.dumps(jd, sort_keys=True, indent=4)
                     fp = open(fn+".json", "w")
                     fp.write(js+"\n")
