@@ -55,7 +55,11 @@ parser.add_argument ('--prefix', help="File prefix", default="./")
 parser.add_argument ('--latitude', type=float, help="Geographic latitude", default=44.9)
 parser.add_argument ('--longitude', type=float, help="Geographic longitude", default=-76.03)
 parser.add_argument ('--led-port', help="Serial port for LED indicator", default=None)
+parser.add_argument ('--stack', help="Stacking factor", type=int, default=5)
 args = parser.parse_args()
+
+
+stack = args.stack
 
 #
 # Setup the camera for streaming
@@ -153,7 +157,7 @@ while True:
             elif counter == 0:
                 xy_coordinates.append(all_ziped[counter])
                 counter += 1
-            elif all_ziped[counter][0] - (zoom/2) < all_ziped[counter - 1][0]:
+            elif all_ziped[counter][0] - (izoom2) < all_ziped[counter - 1][0]:
                 counter += 1
             else:
                 xy_coordinates.append(all_ziped[counter])
