@@ -27,12 +27,14 @@ def led_thread(serd):
     
 def grab_and_baseline(cam, count):
     accum_frame = None
+    accum_init = False
     for i in range(count):
         ret, frame = cam.read()
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        if accum_frame == None:
+        if accum_init == False:
             accum_frame = copy.deepcopy(frame)
             accum_frame = numpy.multiply(accum_frame, 0)
+            accum_init = True
         accum_frame = numpy.add(accum_frame, accum_frame)
     accum_frame = numpy.subtract(accum_frame, min(accum_frame))
     accum_frame = accum_frame.astype(int)
