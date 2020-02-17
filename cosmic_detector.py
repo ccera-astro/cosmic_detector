@@ -106,7 +106,7 @@ print ("Threshhold ", threshold)
 #
 frame_count = 0
 while True:
-    rv, frame = grab_and_baseline(cam, 10)
+    frame = grab_and_baseline(cam, 10)
     frame_count += 1
     if (frame_count >= 100):
         print ("Still getting frames at ", time.ctime())
