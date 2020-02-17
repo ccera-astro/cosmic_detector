@@ -74,6 +74,10 @@ notify_thread.start()
 #
 zoom=30
 
+#
+# Stacking factor
+#
+stack = 5
 fmax = 0
 
 #
@@ -83,11 +87,11 @@ now = time.time()
 count = 0
 
 while ((time.time() - now) <= 5.0):
-    frame = grab_and_baseline(cam, 10)
+    frame = grab_and_baseline(cam, stack)
     fmax += numpy.max(frame)
     count += 1
 
-frate = (10*count)/5.0
+frate = (stack*count)/5.0
 print ("Apparent frame rate", frate)
 #
 # Reduce to average
@@ -104,13 +108,13 @@ print ("Threshhold ", threshold)
 #
 frame_count = 0
 while True:
-    frame = grab_and_baseline(cam, 10)
+    frame = grab_and_baseline(cam, stack)
     frame_count += 1
     if ((frame_count % 100) == 0):
         print ("Still getting frames at ", time.ctime())
     if ((frame_count % 500) == 0):
         nframe = copy.deepcopy(frame)
-        nframe = normalize_image(nframe, 10)
+        nframe = normalize_image(nframe, stack)
         cv2.imwrite("check_frame.png", nframe)
 
 
@@ -124,6 +128,7 @@ while True:
     counter = 0
     xy_coordinates = []
     data = origframe
+    izoom2 = int(zoom/2)
     frame_max = numpy.max(frame)
     if (frame_max > threshold):
         print ("Event detected at ", time.ctime())
@@ -148,7 +153,7 @@ while True:
             elif counter == 0:
                 xy_coordinates.append(all_ziped[counter])
                 counter += 1
-            elif all_ziped[counter][0] - 10 < all_ziped[counter - 1][0]:
+            elif all_ziped[counter][0] - (zoom/2) < all_ziped[counter - 1][0]:
                 counter += 1
             else:
                 xy_coordinates.append(all_ziped[counter])
@@ -164,8 +169,7 @@ while True:
         fractions = t - float(int(t))
         secondsbit = float(ltp.tm_sec) + fractions
         for x, y in xy_coordinates:
-            izoom2 = int(zoom/2)
-            if x >= (zoom/2)+1 and y >= (zoom/2)+1:
+            if x >= izoom2+1 and y >= izoom2+1:
                 img_crop = data[y-izoom2:y + izoom2,
                            x-izoom2:x + izoom2]
                 
