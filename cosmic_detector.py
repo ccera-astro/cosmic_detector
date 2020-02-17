@@ -110,7 +110,9 @@ while True:
     if ((frame_count % 100) == 0):
         print ("Still getting frames at ", time.ctime())
     if ((frame_count % 500) == 0):
-        cv2.imwrite("check_frame.png", frame)
+        nframe = copy.deepcopy(frame)
+        nframe = normalize_image(nframe, 128)
+        cv2.imwrite("check_frame.png", nframe)
 
 
     origframe = copy.deepcopy(frame)
