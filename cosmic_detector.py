@@ -96,7 +96,7 @@ print ("Apparent frame rate", frate)
 fmax /= float(count)
 threshold = args.threshold*fmax
 print ("Threshhold ", threshold)
-astyp
+
 #
 # Forever
 #
