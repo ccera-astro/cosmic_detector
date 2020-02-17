@@ -36,13 +36,12 @@ def grab_and_baseline(cam, count):
             accum_frame = numpy.multiply(accum_frame, 0)
             accum_init = True
         accum_frame = numpy.add(accum_frame, frame)
-    #accum_frame = numpy.subtract(accum_frame, numpy.min(accum_frame))
+    accum_frame = numpy.subtract(accum_frame, numpy.min(accum_frame))
     return accum_frame
     
 
 def normalize_image(img, peak):
-    img = numpy.divide(img, numpy.max(img))
-    img = numpy.multiply(img, peak)
+    img = numpy.divide(img, peak)
     return img
 #
 # Open a capture stream to desired camera index
@@ -111,7 +110,7 @@ while True:
         print ("Still getting frames at ", time.ctime())
     if ((frame_count % 500) == 0):
         nframe = copy.deepcopy(frame)
-        nframe = normalize_image(nframe, 128)
+        nframe = normalize_image(nframe, 10)
         cv2.imwrite("check_frame.png", nframe)
 
 
@@ -183,7 +182,7 @@ while True:
                 if img_crop is None:
                     pass
                 else:
-                    img_crop = normalize_image(img_crop, 254)
+                    img_crop = normalize_image(img_crop, 10)
                     img_zoom = cv2.resize(img_crop, dim, interpolation=cv2.INTER_LINEAR)
                     fn = "%s%04d%02d%02d-%02d%02d%05.2f-%d:%d" % (args.prefix, ltp.tm_year, ltp.tm_mon, ltp.tm_mday,
                     ltp.tm_hour, ltp.tm_min, secondsbit, cndx, mcnt)
