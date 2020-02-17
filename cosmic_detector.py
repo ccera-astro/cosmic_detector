@@ -44,7 +44,6 @@ def grab_and_baseline(cam, count):
 def normalize_image(img, peak):
     img = numpy.divide(img, numpy.max(img))
     img = numpy.multiply(img, peak)
-    img = img.astype(int)
     return img
 #
 # Open a capture stream to desired camera index
