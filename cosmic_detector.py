@@ -114,9 +114,9 @@ frame_count = 0
 while True:
     frame = grab_and_baseline(cam, stack)
     frame_count += 1
-    if ((frame_count % 100) == 0):
+    if ((frame_count % int(1000/stack)) == 0):
         print ("Still getting frames at ", time.ctime())
-    if ((frame_count % 500) == 0):
+    if ((frame_count % int(5000/stack)) == 0):
         nframe = copy.deepcopy(frame)
         nframe = normalize_image(nframe, stack)
         cv2.imwrite("check_frame.png", nframe)
