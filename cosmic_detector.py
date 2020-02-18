@@ -58,7 +58,9 @@ parser.add_argument ('--led-port', help="Serial port for LED indicator", default
 parser.add_argument ('--stack', help="Stacking factor", type=int, default=5)
 args = parser.parse_args()
 
-
+#
+# Set stacking factor
+#
 stack = args.stack
 
 #
@@ -78,10 +80,6 @@ notify_thread.start()
 #
 zoom=30
 
-#
-# Stacking factor
-#
-stack = 5
 fmax = 0
 
 #
@@ -116,6 +114,10 @@ while True:
     frame_count += 1
     if ((frame_count % int(1000/stack)) == 0):
         print ("Still getting frames at ", time.ctime())
+    
+    #
+    # Dump a full-frame from time to time
+    #
     if ((frame_count % int(5000/stack)) == 0):
         nframe = copy.deepcopy(frame)
         nframe = normalize_image(nframe, stack)
@@ -192,7 +194,15 @@ while True:
                 else:
                     img_crop = normalize_image(img_crop, stack)
                     img_zoom = cv2.resize(img_crop, dim, interpolation=cv2.INTER_LINEAR)
-                    cv2.convertScaleAbs(img_zoom, img_zoom, 1.3, 0.0)
+                    
+                    #
+                    # Do a bit of contrast/brightness enhancement
+                    #
+                    cv2.convertScaleAbs(img_zoom, img_zoom, 1.5, 10)
+                    
+                    #
+                    # Write out thumbnail image, and some metadata
+                    #
                     fn = "%s%04d%02d%02d-%02d%02d%05.2f-%d:%d" % (args.prefix, ltp.tm_year, ltp.tm_mon, ltp.tm_mday,
                     ltp.tm_hour, ltp.tm_min, secondsbit, cndx, mcnt)
                     jd = {'x' : int(x), 'y' : int(y), 'threshold' : threshold, 'zoom' : zoom,
