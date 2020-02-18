@@ -190,7 +190,7 @@ while True:
                 if img_crop is None:
                     pass
                 else:
-                    img_crop = normalize_image(img_crop, 10)
+                    img_crop = normalize_image(img_crop, stack)
                     img_zoom = cv2.resize(img_crop, dim, interpolation=cv2.INTER_LINEAR)
                     fn = "%s%04d%02d%02d-%02d%02d%05.2f-%d:%d" % (args.prefix, ltp.tm_year, ltp.tm_mon, ltp.tm_mday,
                     ltp.tm_hour, ltp.tm_min, secondsbit, cndx, mcnt)
