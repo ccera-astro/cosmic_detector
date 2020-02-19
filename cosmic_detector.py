@@ -203,7 +203,7 @@ while True:
                     #
                     # Write out thumbnail image, and some metadata
                     #
-                    fn = "%s%04d%02d%02d-%02d%02d%05.2f-%d:%d" % (args.prefix, ltp.tm_year, ltp.tm_mon, ltp.tm_mday,
+                    fn = "%s%04d%02d%02d-%02d%02d%05.2f-%d-%d" % (args.prefix, ltp.tm_year, ltp.tm_mon, ltp.tm_mday,
                     ltp.tm_hour, ltp.tm_min, secondsbit, cndx, mcnt)
                     jd = {'x' : int(x), 'y' : int(y), 'threshold' : threshold, 'zoom' : zoom,
                         'latitude' : args.latitude, 'longitude' : args.longitude, 'ratio' : frame_max/threshold}
