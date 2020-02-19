@@ -175,9 +175,9 @@ while True:
         fractions = t - float(int(t))
         secondsbit = float(ltp.tm_sec) + fractions
         for x, y in xy_coordinates:
-            if x >= izoom2+1 and y >= izoom2+1:
-                img_crop = data[y-izoom2:y + izoom2,
-                           x-izoom2:x + izoom2]
+            if x >= (izoom2+1) and y >= (izoom2+1):
+                img_crop = data[(y-izoom2):(y+izoom2),
+                           (x-izoom2):(x+izoom2)]
                 
                 #
                 # Signal the LED notifier thread
@@ -185,14 +185,14 @@ while True:
                 if (event != True):
                     event = True
                 #
-                # Resulting image is scaled appropriately
+                # Scale image
                 #
-                r = (zoom*2) / img_crop.shape[1]
-                dim = (int(zoom*2), int(img_crop.shape[0] * r))
+                dim = (int(zoom*2), int(zoom*2))
                 if img_crop is None:
                     pass
                 else:
-                    img_crop = normalize_image(img_crop, stack)
+                    if (stack > 1):
+                        img_crop = normalize_image(img_crop, stack)
                     img_zoom = cv2.resize(img_crop, dim, interpolation=cv2.INTER_LINEAR)
                     
                     #
