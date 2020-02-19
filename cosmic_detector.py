@@ -21,7 +21,7 @@ def led_thread(serd):
             event = False
             if (serd != None):
                 ser = serial.Serial(serd)
-                time.sleep(2.0)
+                time.sleep(3.0)
                 ser.close()
         time.sleep(0.25)
     
