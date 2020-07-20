@@ -212,5 +212,5 @@ while True:
                     fp.write(js+"\n")
                     fp.close()
                      
-                    cv2.imwrite(fn+".png", img_zoom)
+                    cv2.imwrite(fn+".jpg", img_zoom)
                     mcnt += 1
